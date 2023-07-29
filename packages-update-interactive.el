@@ -72,13 +72,14 @@ Return the list of upgradable package-desc of installed package and of
 (defun pui--package-upgrade (old-pkg-desc new-pkg-desc)
   "Install NEW-PKG-DESC and delete OLD-PKG-DESC.
 
-If OLD-PKG-DESC is a vc package, you SHOULD pass nil value to NEW-PKG-DESC."
+If OLD-PKG-DESC is a vc package, NEW-PKG-DESC is ignored."
   (if (and pui--is-package-vc
 	   (package-vc-p old-pkg-desc))
       (package-vc-upgrade old-pkg-desc)
     (unwind-protect
 	(package-install new-pkg-desc 'dont-select)
-      (if (package-installed-p new-pkg-desc)
+      (if (package-installed-p (package-desc-name new-pkg-desc)
+			       (package-desc-version new-pkg-desc))
 	  (package-delete old-pkg-desc 'force 'dont-unselect)))))
 
 (defun pui--format-package-desc (pkgs)
