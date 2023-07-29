@@ -231,9 +231,8 @@ u Unselect     C-S-u Unselect All     q     Quit\n\n")
 
 		    (let (selected-indexes)
 		      (while (not (eobp))
-			(if (not (pui--selected-p))
-			    (add-to-list 'selected-indexes
-					 (- (line-number-at-pos) 1) t))
+			(if (pui--selected-p)
+			    (add-to-list 'selected-indexes (- (line-number-at-pos) 1) t))
 			(forward-line))
 
 		      (if (null selected-indexes)
@@ -243,7 +242,7 @@ u Unselect     C-S-u Unselect All     q     Quit\n\n")
 			    (mapcar
 			     (lambda (i)
 			       (apply #'pui--package-upgrade
-				      (nth i ,upgradable-packages)))
+				      (nth i ',upgradable-packages)))
 			     selected-indexes)
 			  (kill-buffer-and-window))))))))
 
