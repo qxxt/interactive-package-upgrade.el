@@ -101,7 +101,7 @@ PKGS is a list composed of:
 	      (format "=> (%s)" (package-version-join (package-desc-version new)))))))
 
 (defun pui--package-upgrade-all (&optional vc)
-  "Upgrade all packages non-interactively.
+  "Upgrade all packages without prompt.
 
 If VC is non-nil, upgrade vc package also.
 If called interactively, VC will automatically be true if `package-vc' is
@@ -111,11 +111,9 @@ exist."
   (if (and vc (null pui--is-package-vc))
       (error "Trying to upgrade all packages with vc but package-vc doesn’t exist"))
 
-  (if-let ((upgradable-packages (pui--upgradeable-packages vc)))
-      (mapcar
-       (lambda (l)
-	 (apply #'pui--package-upgrade l))
-       upgradable-packages)))
+  (when-let ((upgradable-packages (pui--upgradeable-packages vc)))
+    (message "Packages to upgrade: %s" (mapconcat (lambda (x) (symbol-name (package-desc-name (car x)))) upgradable-packages " "))
+    (mapcar (lambda (l) (apply #'pui--package-upgrade l)) upgradable-packages)))
 
 (defun package-refresh-contents-maybe (&optional nostrict)
   "Refresh package only if `package-refresh-interval' days has passed.
@@ -161,96 +159,95 @@ If called-interactively, VC will depend wheter or not there is `package-vc'."
 	  (apply #'pui--package-upgrade (car upgradable-packages))
 
 	(with-current-buffer (get-buffer-create "*upgrade-package-interactively*")
-	  (save-selected-window
-	    (let ((inhibit-read-only t))
-	      (setq buffer-read-only t)
-	      (erase-buffer)
-	      (switch-to-buffer-other-window (current-buffer))
-	      (set-window-dedicated-p (selected-window) t)
+	  (let ((inhibit-read-only t))
+	    (setq buffer-read-only t)
+	    (erase-buffer)
+	    (switch-to-buffer-other-window (current-buffer))
+	    (set-window-dedicated-p (selected-window) t)
 
-	      (insert "Package to Update:
+	    (insert "Package to Update:
 s Select       C-S-s Select All       [RET] Confirm
 u Unselect     C-S-u Unselect All     q     Quit\n\n")
 
-	      (save-excursion
-		(insert
-		 (mapconcat
-		  (lambda (elem)
-		    (format "   %s"
-			    (pui--format-package-desc elem)))
-		  upgradable-packages "\n")))
+	    (save-excursion
+	      (insert
+	       (mapconcat
+		(lambda (elem)
+		  (format "   %s"
+			  (pui--format-package-desc elem)))
+		upgradable-packages "\n")))
 
-	      (local-set-key
-	       (kbd "s")
-	       (lambda ()
-		 "Select current line."
-		 (interactive)
-		 (if (> (line-number-at-pos) 4)
-		     (pui--select))))
+	    (local-set-key
+	     (kbd "s")
+	     (lambda ()
+	       "Select current line."
+	       (interactive)
+	       (if (> (line-number-at-pos) 4)
+		   (pui--select))))
 
-	      (local-set-key
-	       (kbd "u")
-	       (lambda ()
-		 "Unselect current line."
-		 (interactive)
-		 (if (> (line-number-at-pos) 4)
-		     (pui--unselect))))
+	    (local-set-key
+	     (kbd "u")
+	     (lambda ()
+	       "Unselect current line."
+	       (interactive)
+	       (if (> (line-number-at-pos) 4)
+		   (pui--unselect))))
 
-	      (local-set-key
-	       (kbd "C-S-s")
-	       (lambda ()
-		 "Select all."
-		 (interactive)
-		 (save-excursion
-		   (save-restriction
-		     (forward-line (- 5 (line-number-at-pos)))
-		     (narrow-to-region (point) (point-max))
-		     (while (not (eobp))
-		       (pui--select)
-		       (forward-line))))))
+	    (local-set-key
+	     (kbd "C-S-s")
+	     (lambda ()
+	       "Select all."
+	       (interactive)
+	       (save-excursion
+		 (save-restriction
+		   (forward-line (- 5 (line-number-at-pos)))
+		   (narrow-to-region (point) (point-max))
+		   (while (not (eobp))
+		     (pui--select)
+		     (forward-line))))))
 
-	      (local-set-key
-	       (kbd "C-S-u")
-	       (lambda ()
-		 "Unselect all."
-		 (interactive)
-		 (save-excursion
-		   (save-restriction
-		     (forward-line (- 5 (line-number-at-pos)))
-		     (narrow-to-region (point) (point-max))
-		     (while (not (eobp))
-		       (pui--unselect)
-		       (forward-line))))))
+	    (local-set-key
+	     (kbd "C-S-u")
+	     (lambda ()
+	       "Unselect all."
+	       (interactive)
+	       (save-excursion
+		 (save-restriction
+		   (forward-line (- 5 (line-number-at-pos)))
+		   (narrow-to-region (point) (point-max))
+		   (while (not (eobp))
+		     (pui--unselect)
+		     (forward-line))))))
 
-	      (local-set-key
-	       (kbd "RET")
-	       `(lambda ()
-		  "Upgrade all selected packages"
-		  (interactive)
-		  (save-excursion
-		    (save-restriction
-		      (forward-line (- 5 (line-number-at-pos)))
-		      (narrow-to-region (point) (point-max))
+	    (local-set-key
+	     (kbd "RET")
+	     `(lambda ()
+		"Upgrade all selected packages"
+		(interactive)
+		(save-excursion
+		  (save-restriction
+		    (forward-line (- 5 (line-number-at-pos)))
+		    (narrow-to-region (point) (point-max))
 
-		      (let (selected-indexes)
-			(while (not (eobp))
-			  (if (not (pui--selected-p))
-			      (add-to-list 'selected-indexes
-					   (- (line-number-at-pos) 1) t))
-			  (forward-line))
+		    (let (selected-indexes)
+		      (while (not (eobp))
+			(if (not (pui--selected-p))
+			    (add-to-list 'selected-indexes
+					 (- (line-number-at-pos) 1) t))
+			(forward-line))
 
-			(if (null selected-indexes)
-			    (message "Empty selection, press q to quit")
+		      (if (null selected-indexes)
+			  (message "Empty selection, press q to quit")
 
-			  (unwind-protect
-			      (mapcar
-			       (lambda (i)
-				 (apply #'pui--package-upgrade
-					(nth i ,upgradable-packages)))
-			       selected-indexes)
-			    (kill-buffer-and-window))))))))
+			(unwind-protect
+			    (mapcar
+			     (lambda (i)
+			       (apply #'pui--package-upgrade
+				      (nth i ,upgradable-packages)))
+			     selected-indexes)
+			  (kill-buffer-and-window))))))))
 
-	      (local-set-key (kbd "q") 'kill-buffer-and-window))))))))
+	    (local-set-key (kbd "q") 'kill-buffer-and-window)))))))
 
 (defun pui--scheduler (time)
   "Run every TIME.
