@@ -13,7 +13,7 @@
   :group 'package)
 
 (defcustom package-refresh-interval 2
-  "DAYS until `package-refresh-contents-maybe’."
+  "Number of DAYS until `package-refresh-contents-maybe’."
   :type 'number
   :group 'packages-upgrade-interactive)
 
@@ -27,7 +27,7 @@
 					    (car (car package-archives))
 					    "/archive-contents")
 				    package-user-dir)
-  "Path to archive-contents file for checking freshness of packages.")
+  "Path to package-archive file for checking freshness of `package-archive-contents'.")
 
 (defun pui--selected-p ()
   "Check if current line is selected."
@@ -55,10 +55,10 @@
   "Get list of upgradable packages.
 
 If VC is non-nil, upgradable vc package will also be included.
-If package.el doesn’t support vc package, VC is non-nil, it will throw error.
+If `package-vc' is not supported and VC is non-nil, it will throw error.
 
-Return the list of upgradable package-desc of installed package and of
-`package-archive-contents' in list."
+Return the list of:
+ (old-package-desc new-package-desc)"
   (if (and vc (null pui--is-package-vc))
       (error "Trying to run `pui--upgradeable-packages' with vc but `package-vc' is not supported"))
 
