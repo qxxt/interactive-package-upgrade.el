@@ -1,6 +1,10 @@
 ;;; packages-upgrade-interactive.el --- Simple tools for upgrading Emacs packages interactively
 ;; -*- lexical-binding: t -*-
+
 ;;; Commentary:
+
+;; Simple tools for upgrading Emacs packages interactively
+
 ;;; Code:
 
 (require 'package)
