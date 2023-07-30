@@ -101,6 +101,7 @@ PKGS is a list composed of:
 		"(vc)"
 	      (format "=> (%s)" (package-version-join (package-desc-version new)))))))
 
+;;;###autoload
 (defun pui--package-upgrade-all (&optional vc)
   "Upgrade all packages without prompt.
 
@@ -116,6 +117,7 @@ exist."
     (message "Packages to upgrade: %s" (mapconcat (lambda (x) (symbol-name (package-desc-name (car x)))) upgradable-packages " "))
     (mapcar (lambda (l) (apply #'pui--package-upgrade l)) upgradable-packages)))
 
+;;;###autoload
 (defun package-refresh-contents-maybe (&optional nostrict)
   "Refresh package only if `package-refresh-interval' days has passed.
 
@@ -140,6 +142,7 @@ since last updated."
 	   (y-or-n-p "Refresh package contents now?"))
       (package-refresh-contents)))
 
+;;;###autoload
 (defun package-upgrade-interactively (&optional vc)
   "Upgrade packages interractively.
 
@@ -249,6 +252,7 @@ u Unselect     C-S-u Unselect All     q     Quit\n\n")
 
 	    (local-set-key (kbd "q") 'kill-buffer-and-window)))))))
 
+;;;###autoload
 (defun pui--scheduler (time)
   "Run every TIME.
 
