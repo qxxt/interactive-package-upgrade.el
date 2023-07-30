@@ -8,10 +8,14 @@
 (require 'time-date)
 (require 'diary-lib)
 
+(defgroup packages-update-interactive nil
+  "packages-update-interactive Group."
+  :group 'package)
+
 (defcustom package-refresh-interval 2
   "DAYS until `package-refresh-contents-maybe’."
   :type 'number
-  :group 'package)
+  :group 'packages-update-interactive)
 
 (defvar pui--is-package-vc (featurep 'package-vc)
   "Check Wether or not `package-vc' is supported.
