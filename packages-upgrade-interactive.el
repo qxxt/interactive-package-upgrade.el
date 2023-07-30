@@ -1,9 +1,77 @@
 ;;; packages-upgrade-interactive.el --- Simple tools for upgrading Emacs packages interactively
 ;; -*- lexical-binding: t -*-
 
+;; Author: Tegar Syahputra <i8iho23khprotonmail.com>
+;; Version: 0.0.1
+;; Keywords: package tools
+;; Package-Requires: ((emacs "28"))
+;; URL: https://github.com/qxxt/packages-upgrade-interactive.el
+
 ;;; Commentary:
 
 ;; Simple tools for upgrading Emacs packages interactively
+
+;;; Usage:
+;;
+;; M-x pui--package-upgrade-all
+;; Upgrade all packages without prompting. If package-vc is supported,
+;; upgrade those as well.
+;;
+;; (pui--package-upgrade-all 'vc)
+;; If called uninteractively, you need to pass non-nil to VC
+;; parameters to upgrade vc packages.
+;;
+;; To make with work with both vc and non-vc supported Emacs.
+;; (pui--package-upgrade-all (functionp 'package-vc-p))
+;; This will check if package-vc is supported, and pass those value as VC paramenter.
+;;
+;;
+;; M-x package-refresh-contents-maybe
+;; refreshes package archives, package archives are only refreshed IF
+;; the number of days from `package-refresh-interval' has passed.
+;;
+;; (package-refresh-contents-maybe ’no-strict)
+;; If the no-strict parameter is non-nil, it will tolerate 1 day lapse
+;; from `package-refresh-interval’.  This is only practical for if you
+;; want to refresh package archive at specified time of day using
+;; `pui--scheduler’.
+;;
+;;
+;; M-x package-upgrade-interactively
+;; Upgrade package interactively. If package-vc is supported, those
+;; packages will be included for selection as well.
+;;
+;; (package-upgrade-interactively 'vc)
+;; If called uninteractively, you need to pass non-nil to VC
+;; parameters to upgrade vc packages.
+;;
+;; To make with work with both vc and non-vc supported Emacs:
+;; (package-upgrade-interactively (functionp 'package-vc-p))
+;; Or:
+;; (call-interactively 'package-upgrade-interactively)
+;;
+;;
+;; (pui--scheduler "07:00pm")
+;; Schedules a call to `package-refresh-contents-maybe' and
+;; `package-upgrade-interactively' at 7:00 PM.
+;; The format must be either HH:MM or HH:MMam
+;;
+;;
+;;
+;; Typical setup for running at startup:
+;;
+;; (setq package-refresh-interval 2) ; Set to 2 days period
+;; (package-refresh-contents-maybe) ; Refresh package archives
+;; (call-interactively 'package-upgrade-interactively) ; Upgrade package
+;; (pui--scheduler "07:00am") ; Run at 07:00am
+
+;;; Customization:
+;;
+;; The number of days that must pass before package archives are
+;; refreshed can be customized with the package-refresh-interval
+;; variable. The default value is 2 days. To change it, set the
+;; variable to the desired number of days:
+;; (setq package-refresh-interval 1)
 
 ;;; Code:
 
