@@ -1,4 +1,4 @@
-;;; packages-update-interactive.el --- Simple tools for upgrading Emacs packages interactively
+;;; packages-upgrade-interactive.el --- Simple tools for upgrading Emacs packages interactively
 ;; -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;; Code:
@@ -8,14 +8,14 @@
 (require 'time-date)
 (require 'diary-lib)
 
-(defgroup packages-update-interactive nil
-  "packages-update-interactive Group."
+(defgroup packages-upgrade-interactive nil
+  "packages-upgrade-interactive Group."
   :group 'package)
 
 (defcustom package-refresh-interval 2
   "DAYS until `package-refresh-contents-maybe’."
   :type 'number
-  :group 'packages-update-interactive)
+  :group 'packages-upgrade-interactive)
 
 (defvar pui--is-package-vc (featurep 'package-vc)
   "Check Wether or not `package-vc' is supported.
@@ -273,5 +273,5 @@ TIME MUST be in this format:
 		 (package-refresh-contents-maybe 'no-strict)
 		 (package-upgrade-interactively pui--is-package-vc))))
 
-(provide 'packages-update-interactive)
-;;; packages-update-interactive.el ends here
+(provide 'packages-upgrade-interactive)
+;;; packages-upgrade-interactive.el ends here
