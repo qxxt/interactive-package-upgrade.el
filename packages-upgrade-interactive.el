@@ -33,6 +33,11 @@
   "Check if current line is selected."
   (equal ?S (char-after (line-beginning-position))))
 
+;; (defun pui--currently-vc ()
+;;   "Check if current line is a vc package."
+;;   (goto-char (- (line-end-position) 4))
+;;   (looking-at "\(vc\)"))
+
 (defun pui--select ()
   "Select package in current line."
   (if (null (pui--selected-p))
