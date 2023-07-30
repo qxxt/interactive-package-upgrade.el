@@ -22,9 +22,11 @@
 
 `package-vc' is a new feature of Emacs 29.")
 
-(defvar pui--archive-contents-file (concat package-user-dir "/archives/"
-					   (car (car package-archives))
-					   "/archive-contents")
+(defvar pui--archive-contents-file (expand-file-name
+				    (concat "archives/"
+					    (car (car package-archives))
+					    "/archive-contents")
+				    package-user-dir)
   "Path to archive-contents file for checking freshness of packages.")
 
 (defun pui--selected-p ()
