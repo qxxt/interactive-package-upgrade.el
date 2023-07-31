@@ -1,7 +1,7 @@
 ;;; packages-upgrade-interactive.el --- Simple tools for upgrading Emacs packages interactively
 ;; -*- lexical-binding: t -*-
 
-;; Author: Tegar Syahputra <i8iho23khprotonmail.com>
+;; Author: Tegar Syahputra <i8iho23kh@protonmail.com>
 ;; Version: 0.0.1
 ;; Keywords: package tools
 ;; Package-Requires: ((emacs "28"))
