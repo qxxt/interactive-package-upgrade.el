@@ -96,7 +96,7 @@
 
 (defvar pui--archive-contents-file (expand-file-name
 				    (concat "archives/"
-					    (car (car package-archives))
+					    (caar package-archives)
 					    "/archive-contents")
 				    package-user-dir)
   "Path to package-archive file for checking freshness of `package-archive-contents'.")
