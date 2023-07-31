@@ -165,24 +165,21 @@ If OLD-PKG-DESC is a vc package, NEW-PKG-DESC is ignored."
 			       (package-desc-version new-pkg-desc))
 	  (package-delete old-pkg-desc 'force 'dont-unselect)))))
 
-(defun pui--format-package-desc (pkgs)
-  "Format PKGS to:
+(defun pui--format-package-desc (old-pkg-desc new-pkg-desc)
+  "Format OLD-PKG-DESC and NEW-PKG-DESC.
+
+This format are used:
 package-name (current-version) => (new-version)
 
-If PKGS is a vc package:
-package-name (current-version) (vc)
-
-PKGS is a list composed of:
- (old-package-desc new-package-desc)."
-  (let ((old (car pkgs))
-	(new (cadr pkgs)))
-
-    (format "%s (%s) %s"
-	    (package-desc-name old)
-	    (package-version-join (package-desc-version old))
-	    (if (and pui--is-package-vc (package-vc-p old))
-		"(vc)"
-	      (format "=> (%s)" (package-version-join (package-desc-version new)))))))
+If OLD-PKG-DESC is a vc package, NEW-PKG-DESC is ignored.
+And, the following format will be used instead:
+package-name (current-version) (vc)"
+  (format "%s (%s) %s"
+	  (package-desc-name old-pkg-desc)
+	  (package-version-join (package-desc-version old-pkg-desc))
+	  (if (and pui--is-package-vc (package-vc-p old-pkg-desc))
+	      "(vc)"
+	    (format "=> (%s)" (package-version-join (package-desc-version new-pkg-desc))))))
 
 ;;;###autoload
 (defun pui--package-upgrade-all (&optional vc)
@@ -241,9 +238,9 @@ If called-interactively, VC will depend wheter or not there is `package-vc'."
   (let ((upgradable-packages (pui--upgradeable-packages vc)))
     (if (null upgradable-packages)
 	(message "All package are up-to-date")
-      (if (and (equal (length upgradable-packages) 1)
-	       (y-or-n-p (format "Upgrade %s now?" (pui--format-package-desc (car upgradable-packages)))))
-	  (apply #'pui--package-upgrade (car upgradable-packages))
+      (if (equal (length upgradable-packages) 1)
+	  (if (y-or-n-p (format "Upgrade %s now?" (pui--format-package-desc (caar upgradable-packages) (cadar upgradable-packages))))
+	      (apply #'pui--package-upgrade (car upgradable-packages)))
 
 	(with-current-buffer (get-buffer-create "*upgrade-package-interactively*")
 	  (let ((inhibit-read-only t))
@@ -261,7 +258,7 @@ u Unselect     C-S-u Unselect All     q     Quit\n\n")
 	       (mapconcat
 		(lambda (elem)
 		  (format "   %s"
-			  (pui--format-package-desc elem)))
+			  (pui--format-package-desc (car elem) (cadr elem))))
 		upgradable-packages "\n")))
 
 	    (local-set-key
